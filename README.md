@@ -75,8 +75,8 @@ El alcance del proyecto se divide en 5 módulos principales:
 
 * **Docente:** JUAN LEON S.
 * **Equipo de Desarrollo:**
-    * [Tu Nombre] - Líder/Arquitecto
-    * [Nombre Compañero 1] - Diseñador UI/Assets
-    * [Nombre Compañero 2] - Constructor UI
+    * TOLEDO LA FUENTE, LUIS MIGUEL - Líder/Arquitecto
+    * VALERIANO COLAN, CARLOS ALBERTO - Diseñador UI/Assets
+    * VASQUEZ CHAVEZ, FLAVIO FABRIZIO LUCAS - Constructor UI
 
 
