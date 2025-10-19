@@ -34,7 +34,9 @@ Este proyecto está construido 100% en Kotlin y sigue los principios de [Modern 
 ## 📁 Estructura del Proyecto
 
 El proyecto sigue una arquitectura limpia y modular, basada en la estructura definida el Día 1:
-<img width="402" height="457" alt="image" src="https://github.com/user-attachments/assets/ef90685c-c669-481c-947d-42659cea75a8" />
+
+<img width="941" height="869" alt="image" src="https://github.com/user-attachments/assets/696ed9b0-0c6e-4678-bcea-62b69142034d" />
+
 
 ---
 
