@@ -17,15 +17,15 @@
         android:textSize="20px"
         android:fontFamily="sans-serif-medium"
         android:text="MetroLima"
-        android:x="45"
-        android:y="25" />
+        android:x="45dp"
+        android:y="25dp" />
 
     <text
         android:fillColor="#FF4CAF50"
         android:textSize="20px"
         android:fontFamily="sans-serif-medium"
         android:text="GO"
-        android:x="100"
-        android:y="25" />
+        android:x="100dp"
+        android:y="25dp" />
 
 </vector>
