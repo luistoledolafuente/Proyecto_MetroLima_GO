@@ -1,0 +1,31 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="40dp"
+    android:viewportWidth="120"
+    android:viewportHeight="40">
+
+    <path
+        android:fillColor="#FF6A3DE8"
+        android:pathData="M10,0 C4.47,0 0,4.47 0,10 V30 C0,35.53 4.47,40 10,40 H30 C35.53,40 40,35.53 40,30 V10 C40,4.47 35.53,0 30,0 H10 Z" />
+
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M20,10 C15.58,10 12,13.58 12,18 V22 H15 V25 H17 V22 H23 V25 H25 V22 H28 V18 C28,13.58 24.42,10 20,10 Z M15,14 H25 V18 H15 V14 Z" />
+
+    <text
+        android:fillColor="#FF212121"
+        android:textSize="20px"
+        android:fontFamily="sans-serif-medium"
+        android:text="MetroLima"
+        android:x="45"
+        android:y="25" />
+
+    <text
+        android:fillColor="#FF4CAF50"
+        android:textSize="20px"
+        android:fontFamily="sans-serif-medium"
+        android:text="GO"
+        android:x="100"
+        android:y="25" />
+
+</vector>
