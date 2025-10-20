@@ -6,46 +6,42 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.metrolimago.ui.screens.home.HomeScreen
+import com.metrolimago.ui.screens.station_list.ListaEstacionesScreen
 
-/**
- * Este es el "mapa" principal de nuestra app.
- * El NavHost es como un contenedor que muestra la pantalla correcta
- * según la ruta actual.
- */
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    // 'startDestination' es la primera pantalla que se mostrará al abrir la app.
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    // Para que veas tu pantalla de inmediato, la he puesto como la de inicio.
+    // Puedes cambiarla de vuelta a Screen.Home.route cuando quieras.
+    NavHost(navController = navController, startDestination = Screen.StationList.route) {
 
-        // --- Aquí definimos cada pantalla de nuestro mapa ---
+        // --- Definición de cada pantalla ---
 
-        // Cuando la ruta sea "home", mostramos la pantalla de inicio.
         composable(route = Screen.Home.route) {
             HomeScreen()
         }
 
-        // Cuando la ruta sea "station_list", mostramos la lista de estaciones.
+        // --- ¡AQUÍ ESTÁ LA CORRECCIÓN! ---
+        // Ahora sí se llama a tu Composable 'ListaEstacionesScreen'.
         composable(route = Screen.StationList.route) {
-            // TODO: Aquí irá el ListaEstacionesScreen() de un compañero.
-            Text("PANTALLA DE LISTA DE ESTACIONES (ListaEstacionesScreen)")
+            ListaEstacionesScreen(
+                onStationClick = { stationName ->
+                    // Lógica para cuando se haga clic en una estación.
+                    println("Clic en: $stationName")
+                    // Futuro: navController.navigate("station_detail_screen/$stationName")
+                }
+            )
         }
 
-        // Cuando la ruta sea "route_planner", mostramos el planificador.
         composable(route = Screen.RoutePlanner.route) {
-            Text("PANTALLA DE PLANIFICADOR DE RUTA (PlanificadorRutaScreen)")
+            Text("PANTALLA DE PLANIFICADOR DE RUTA")
         }
 
-        // Cuando la ruta sea "settings", mostramos la configuración.
-        composable(route = Screen.Settings.route){
-            Text("PANTALLA DE CONFIGURACIÓN (ConfiguracionScreen)")
+        composable(route = Screen.Settings.route) {
+            Text("PANTALLA DE AJUSTES")
         }
 
-        // Esta es la pantalla que necesita un "argumento" (el ID de la estación).
         composable(route = Screen.StationDetail.route) { backStackEntry ->
-            // Recogemos el ID de la estación desde la ruta.
             val stationId = backStackEntry.arguments?.getString("stationId")
-
-            // TODO: Aquí irá el DetalleEstacionScreen() de un compañero.
             Text("PANTALLA DE DETALLE para la estación: $stationId")
         }
     }
