@@ -24,12 +24,8 @@ import androidx.compose.ui.unit.sp
 import com.metrolimago.R
 import com.metrolimago.ui.theme.MetroLimaGOTheme
 
-/**
- * Pantalla principal del proyecto MetroLima GO.
- * Muestra el logo, estado del sistema y estaciones cercanas.
- */
 @Composable
-fun HomeScreen(onStationClick: () -> Unit = {}) {
+fun HomeScreen(onStationClick: (String) -> Unit = {}) {
 
     LazyColumn(
         modifier = Modifier
@@ -38,10 +34,9 @@ fun HomeScreen(onStationClick: () -> Unit = {}) {
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Espaciador superior
         item { Spacer(modifier = Modifier.height(32.dp)) }
 
-        // --- 1. SECCIÓN DEL LOGO ---
+        // --- LOGO ---
         item {
             Text(text = "Bienvenido a", fontSize = 16.sp, color = Color.Gray)
             Spacer(modifier = Modifier.height(8.dp))
@@ -61,10 +56,9 @@ fun HomeScreen(onStationClick: () -> Unit = {}) {
             }
         }
 
-        // Espaciador
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
-        // --- 2. CHIP DE ESTADO DEL SISTEMA ---
+        // --- ESTADO DEL SISTEMA ---
         item {
             Card(
                 shape = RoundedCornerShape(16.dp),
@@ -89,10 +83,9 @@ fun HomeScreen(onStationClick: () -> Unit = {}) {
             }
         }
 
-        // Espaciador
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
-        // --- 3. TARJETA DE ESTACIONES CERCANAS ---
+        // --- TARJETA DE ESTACIONES CERCANAS ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -100,7 +93,6 @@ fun HomeScreen(onStationClick: () -> Unit = {}) {
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Column {
-                    // Fila superior con título y botón "Ubicarme"
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -126,7 +118,6 @@ fun HomeScreen(onStationClick: () -> Unit = {}) {
                         }
                     }
 
-                    // Contenedor para el mapa y la lista
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -136,7 +127,6 @@ fun HomeScreen(onStationClick: () -> Unit = {}) {
                             )
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            // Placeholder para el gráfico del mapa
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -149,23 +139,23 @@ fun HomeScreen(onStationClick: () -> Unit = {}) {
                             }
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // Lista de estaciones (datos de ejemplo)
-                            StationItem(number = "1", name = "Grau", distance = "~1.4 km", onClick = onStationClick)
-                            StationItem(number = "2", name = "Gamarra", distance = "~5.3 km", onClick = onStationClick)
+                            // 🔹 Pasa el nombre de la estación al hacer clic
+                            StationItem(number = "1", name = "Grau", distance = "~1.4 km") {
+                                onStationClick("Grau")
+                            }
+                            StationItem(number = "2", name = "Gamarra", distance = "~5.3 km") {
+                                onStationClick("Gamarra")
+                            }
                         }
                     }
                 }
             }
         }
 
-        // Espaciador inferior
         item { Spacer(modifier = Modifier.height(16.dp)) }
     }
 }
 
-/**
- * Componente que representa una estación en la lista.
- */
 @Composable
 fun StationItem(number: String, name: String, distance: String, onClick: () -> Unit = {}) {
     Row(
@@ -204,7 +194,6 @@ fun StationItem(number: String, name: String, distance: String, onClick: () -> U
     }
 }
 
-// --- PREVIEW ---
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenNewPreview() {

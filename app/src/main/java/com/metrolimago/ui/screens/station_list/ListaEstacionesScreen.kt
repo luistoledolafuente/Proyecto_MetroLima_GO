@@ -49,14 +49,26 @@ val ScreenBackground = Color(0xFFF5F5F5)
 val LightGrayText = Color(0xFF8A8A8A)
 
 /**
- * Tarea 1 y 3: Pantalla completa basada en el diseño de Figma.
+ * Pantalla completa basada en el diseño de Figma, ahora con búsqueda funcional.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListaEstacionesScreen(
-    // Tarea 4: Preparar la Navegación
     onStationClick: (String) -> Unit
 ) {
+    // 1. "Subimos el estado" aquí. Esta pantalla ahora controla el texto de búsqueda.
+    var searchText by remember { mutableStateOf("") }
+
+    // 2. Creamos una lista filtrada que se recalcula cada vez que searchText cambia.
+    val filteredStations = if (searchText.isBlank()) {
+        mockStations
+    } else {
+        mockStations.filter {
+            it.name.contains(searchText, ignoreCase = true) ||
+                    it.district.contains(searchText, ignoreCase = true)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -66,42 +78,50 @@ fun ListaEstacionesScreen(
         },
         containerColor = ScreenBackground
     ) { paddingValues ->
-        LazyColumn(
-            // **CORRECCIÓN APLICADA AQUÍ:**
-            // El padding se aplica ANTES del fillMaxSize para que el LazyColumn
-            // ocupe todo el espacio restante disponible, evitando la pantalla en blanco.
+        Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            // Header con Buscador y Filtros
-            item {
-                HeaderSection()
-            }
+            // 3. Le pasamos el estado y la función para cambiarlo al Header.
+            HeaderSection(
+                searchText = searchText,
+                onSearchTextChange = { newText ->
+                    searchText = newText
+                }
+            )
 
-            // Contador de Estaciones
-            item {
-                Text(
-                    text = "${mockStations.size} estaciones",
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                    color = LightGrayText,
-                    fontSize = 14.sp
-                )
-            }
+            LazyColumn {
+                // Contador de Estaciones (ahora usa la lista filtrada)
+                item {
+                    Text(
+                        text = "${filteredStations.size} estaciones encontradas",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                        color = LightGrayText,
+                        fontSize = 14.sp
+                    )
+                }
 
-            // Lista de Estaciones
-            items(mockStations) { station ->
-                StationListItem(
-                    station = station,
-                    onItemClick = { onStationClick(station.name) }
-                )
+                // Lista de Estaciones (ahora usa la lista filtrada)
+                items(filteredStations) { station ->
+                    StationListItem(
+                        station = station,
+                        onItemClick = { onStationClick(station.name) }
+                    )
+                }
             }
         }
     }
 }
 
+/**
+ * El Header ahora es "tonto" (stateless). Recibe el estado y avisa cuando cambia.
+ */
 @Composable
-fun HeaderSection() {
+fun HeaderSection(
+    searchText: String,
+    onSearchTextChange: (String) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,12 +129,11 @@ fun HeaderSection() {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Barra de búsqueda (visual)
-        var searchText by remember { mutableStateOf("") }
+        // La barra de búsqueda ahora usa los parámetros que le pasamos.
         OutlinedTextField(
             value = searchText,
-            onValueChange = { searchText = it },
-            placeholder = { Text("Buscar estación...") },
+            onValueChange = onSearchTextChange, // Avisa a la pantalla principal del cambio
+            placeholder = { Text("Buscar por nombre o distrito...") },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
@@ -123,7 +142,8 @@ fun HeaderSection() {
                 unfocusedContainerColor = Color.White,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
-            )
+                ),
+            singleLine = true
         )
 
         Spacer(modifier = Modifier.height(16.dp))
