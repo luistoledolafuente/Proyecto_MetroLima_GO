@@ -42,6 +42,7 @@ android {
 
 dependencies {
 
+    // --- DEPENDENCIAS EXISTENTES (las que ya tenías) ---
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -57,20 +58,33 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    // --- Room (Base de Datos) ---
+
+    // --- BASE DE DATOS Y ASINCRONÍA (Arreglos/Añadidos) ---
+
+    // Room (Base de datos)
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
+    // OJO: Si usas 'kapt', debes tener la configuración 'id("kotlin-kapt")' en la parte superior.
     kapt("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
 
-    // Navigation Compose (Para moverte entre pantallas)
+    // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
     // Retrofit (Para la API)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0") // Para convertir JSON
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    // ViewModel (Necesario para la lógica de UI y Coroutines)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    // COROUTINES (ESTAS FALTABAN, son necesarias para operaciones asíncronas y Room/Retrofit)
+    val coroutinesVersion = "1.8.0"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+
+    // ViewModel (Asegurando versiones para Compose)
+    val lifecycleVersion = "2.8.0"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion") // Añadido para asegurar la compatibilidad
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.runtime:runtime")
 }
