@@ -5,11 +5,6 @@
       <config />
     </shared>
     <layouts>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_accessible.xml">
-        <config>
-          <theme>@style/Theme.MetroLimaGO</theme>
-        </config>
-      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_ajustes.xml">
         <config>
           <theme>@style/Theme.MetroLimaGO</theme>
@@ -21,11 +16,6 @@
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_check_circle.xml">
-        <config>
-          <theme>@style/Theme.MetroLimaGO</theme>
-        </config>
-      </layout>
-      <layout url="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_discapacitados.xml">
         <config>
           <theme>@style/Theme.MetroLimaGO</theme>
         </config>
@@ -76,7 +66,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7abe808-e78c-4a25-bae1-1af1345cac03" name="Changes" comment="" />
+    <list default="true" id="a7abe808-e78c-4a25-bae1-1af1345cac03" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/repository/MetroRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/repository/MetroRepository.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -111,8 +103,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin File" />
         <option value="resourceFile" />
+        <option value="Kotlin File" />
       </list>
     </option>
   </component>
@@ -255,7 +247,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/navigation/AppNavigation.kt</url>
-          <line>46</line>
+          <line>57</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
@@ -266,12 +258,12 @@
       <map>
         <entry key="com.metrolimago">
           <value>
-            <CheckInfo lastCheckTimestamp="1760846859418" />
+            <CheckInfo lastCheckTimestamp="1761008744071" />
           </value>
         </entry>
         <entry key="com.metrolimago.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1760846859419" />
+            <CheckInfo lastCheckTimestamp="1761008744070" />
           </value>
         </entry>
       </map>
