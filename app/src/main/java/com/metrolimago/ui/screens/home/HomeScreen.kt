@@ -2,6 +2,7 @@ package com.metrolimago.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -20,26 +21,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.metrolimago.R // Asegúrate de que R se importe correctamente
+import com.metrolimago.R
 import com.metrolimago.ui.theme.MetroLimaGOTheme
 
-/**
- * Esta es la nueva HomeScreen, actualizada para coincidir con el diseño final.
- */
 @Composable
-fun HomeScreen() {
-    // LazyColumn permite que la pantalla sea scrollable si el contenido es muy largo.
+fun HomeScreen(onStationClick: (String) -> Unit = {}) {
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF4F6F9)) // Un color de fondo gris claro
+            .background(Color(0xFFF4F6F9))
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Espaciador superior
         item { Spacer(modifier = Modifier.height(32.dp)) }
 
-        // --- 1. SECCIÓN DEL LOGO ---
+        // --- LOGO ---
         item {
             Text(text = "Bienvenido a", fontSize = 16.sp, color = Color.Gray)
             Spacer(modifier = Modifier.height(8.dp))
@@ -47,7 +44,7 @@ fun HomeScreen() {
                 Image(
                     painter = painterResource(id = R.drawable.logo_metrolima_go),
                     contentDescription = "Logo MetroLima GO",
-                    modifier = Modifier.size(64.dp) // <-- ¡CAMBIO AQUÍ! Aumentamos el tamaño
+                    modifier = Modifier.size(64.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
@@ -59,10 +56,9 @@ fun HomeScreen() {
             }
         }
 
-        // Espaciador
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
-        // --- 2. CHIP DE ESTADO DEL SISTEMA ---
+        // --- ESTADO DEL SISTEMA ---
         item {
             Card(
                 shape = RoundedCornerShape(16.dp),
@@ -87,10 +83,9 @@ fun HomeScreen() {
             }
         }
 
-        // Espaciador
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
-        // --- 3. TARJETA DE ESTACIONES CERCANAS ---
+        // --- TARJETA DE ESTACIONES CERCANAS ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -98,7 +93,6 @@ fun HomeScreen() {
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
                 Column {
-                    // Fila superior con título y botón "Ubicarme"
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -112,7 +106,6 @@ fun HomeScreen() {
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold
                         )
-                        // Botón "Ubicarme" (por ahora solo visual)
                         TextButton(onClick = { /* TODO */ }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_ubicarme),
@@ -125,7 +118,6 @@ fun HomeScreen() {
                         }
                     }
 
-                    // Contenedor para el mapa y la lista
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -135,7 +127,6 @@ fun HomeScreen() {
                             )
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-                            // Placeholder para el gráfico del mapa
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -148,32 +139,32 @@ fun HomeScreen() {
                             }
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            // Lista de estaciones (datos de ejemplo)
-                            StationItem(number = "1", name = "Grau", distance = "~1.4 km")
-                            StationItem(number = "2", name = "Gamarra", distance = "~5.3 km")
+                            // 🔹 Pasa el nombre de la estación al hacer clic
+                            StationItem(number = "1", name = "Grau", distance = "~1.4 km") {
+                                onStationClick("Grau")
+                            }
+                            StationItem(number = "2", name = "Gamarra", distance = "~5.3 km") {
+                                onStationClick("Gamarra")
+                            }
                         }
                     }
                 }
             }
         }
 
-        // Espaciador inferior para que el último elemento no se pegue a la barra de nav.
         item { Spacer(modifier = Modifier.height(16.dp)) }
     }
 }
 
-/**
- * Un Composable reutilizable para cada fila de la lista de estaciones cercanas.
- */
 @Composable
-fun StationItem(number: String, name: String, distance: String) {
+fun StationItem(number: String, name: String, distance: String, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Círculo con el número
         Box(
             modifier = Modifier
                 .size(24.dp)
@@ -181,18 +172,20 @@ fun StationItem(number: String, name: String, distance: String) {
                 .background(Color(0xFFEDE7F6)),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = number, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = number,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Columna con el nombre y la distancia
         Column(modifier = Modifier.weight(1f)) {
             Text(text = name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             Text(text = "Distancia aprox.: $distance", color = Color.Gray, fontSize = 14.sp)
         }
 
-        // Ícono de ubicación al final
         Icon(
             imageVector = Icons.Default.LocationOn,
             contentDescription = "Ubicación",
@@ -201,7 +194,6 @@ fun StationItem(number: String, name: String, distance: String) {
     }
 }
 
-// --- PREVIEW ---
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenNewPreview() {
@@ -209,4 +201,3 @@ fun HomeScreenNewPreview() {
         HomeScreen()
     }
 }
-
