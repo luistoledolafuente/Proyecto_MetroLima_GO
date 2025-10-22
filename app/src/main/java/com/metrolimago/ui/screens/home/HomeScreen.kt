@@ -1,6 +1,6 @@
 package com.metrolimago.ui.screens.home
 
-// Tus imports de UI
+// Imports de UI necesarios
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,40 +9,38 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel // Import para viewModel()
+
+// Imports del modelo y tema
 import com.metrolimago.R
-import com.metrolimago.ui.theme.MetroLimaGOTheme
-
-
 import com.metrolimago.data.model.Alerta
-import com.metrolimago.ui.screens.home.HomeUiState
+import com.metrolimago.ui.theme.*
 
 @Composable
 fun HomeScreen(
-    onStationClick: (String) -> Unit = {},
-    // La conexión final con la Factory la hará Luis
-    // homeViewModel: HomeViewModel = viewModel(...) // <-- Se añadirá después
+    // --- CONEXIÓN FINAL ---
+    // Usamos viewModel() con la Factory para obtener la instancia real
+    homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
+    onStationClick: (String) -> Unit = {}
 ) {
-    // --- CONEXIÓN TEMPORAL (SOLO PARA QUE COMPILE Y VEAS EL DISEÑO) ---
-    // Cambia este valor para probar los diferentes estados en el Preview
-    val uiState: HomeUiState = HomeUiState.Loading // Prueba con .Success(...) o .Error(...)
+    // Obtenemos el estado REAL del ViewModel usando collectAsState
+    val uiState by homeViewModel.uiState.collectAsState()
 
-    // Se ha movido el contenido a "HomeScreenContent" para que los Previews funcionen
+    // Llamamos al Composable que contiene la UI, pasándole el estado real
     HomeScreenContent(
         uiState = uiState,
         onStationClick = onStationClick
@@ -51,7 +49,7 @@ fun HomeScreen(
 
 /**
  * Este Composable contiene la UI real y reacciona al estado (uiState).
- * Así los Previews pueden probar diferentes estados fácilmente.
+ * No necesita cambios respecto a la versión de Flavio.
  */
 @Composable
 fun HomeScreenContent(
@@ -67,7 +65,7 @@ fun HomeScreenContent(
     ) {
         item { Spacer(modifier = Modifier.height(32.dp)) }
 
-        // --- LOGO (Tu código original) ---
+        // --- LOGO ---
         item {
             Text(text = "Bienvenido a", fontSize = 16.sp, color = Color.Gray)
             Spacer(modifier = Modifier.height(8.dp))
@@ -82,14 +80,15 @@ fun HomeScreenContent(
                     text = "MetroLima\nGO",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    lineHeight = 26.sp
+                    lineHeight = 26.sp,
+                    color = TextPrimary // Usar color del tema
                 )
             }
         }
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
-        // --- SECCIÓN DE ESTADO DEL SISTEMA (AHORA REACTIVA) ---
+        // --- SECCIÓN DE ESTADO DEL SISTEMA (REACTIVA) ---
         item {
             when (uiState) {
                 is HomeUiState.Loading -> {
@@ -97,12 +96,7 @@ fun HomeScreenContent(
                 }
                 is HomeUiState.Success -> {
                     val primeraAlerta = uiState.alertas.firstOrNull()
-                    if (primeraAlerta != null) {
-                        EstadoSistemaCard(alerta = primeraAlerta)
-                    } else {
-                        // Estado por defecto si no hay alertas
-                        EstadoSistemaCard(alerta = Alerta(0, "Todos los sistemas operativos", "Servicio normal", "INFO"))
-                    }
+                    EstadoSistemaCard(alerta = primeraAlerta ?: Alerta(0, "Todos los sistemas operativos", "Servicio normal", "INFO"))
                 }
                 is HomeUiState.Error -> {
                     Card(
@@ -121,12 +115,12 @@ fun HomeScreenContent(
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
-        // --- TARJETA DE ESTACIONES CERCANAS (Tu código original) ---
+        // --- TARJETA DE ESTACIONES CERCANAS ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary)
+                colors = CardDefaults.cardColors(containerColor = MetroLimaPurple) // Usar color del tema
             ) {
                 Column {
                     Row(
@@ -143,8 +137,10 @@ fun HomeScreenContent(
                             fontWeight = FontWeight.Bold
                         )
                         TextButton(onClick = { /* TODO */ }) {
+                            // Considerar usar un Icon vectorial si tienes uno para "ubicarme"
+                            // Icon(Icons.Default.MyLocation, ...)
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_ubicarme),
+                                painter = painterResource(id = R.drawable.ic_ubicarme), // Asegúrate que este drawable existe
                                 contentDescription = "Ubicarme",
                                 tint = Color.White,
                                 modifier = Modifier.size(16.dp)
@@ -158,7 +154,7 @@ fun HomeScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                color = Color.White,
+                                color = BackgroundLight, // Usar color del tema
                                 shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                             )
                     ) {
@@ -168,13 +164,14 @@ fun HomeScreenContent(
                                     .fillMaxWidth()
                                     .height(150.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(Color.LightGray),
+                                    .background(DisabledGray), // Usar color del tema
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("GRÁFICO DEL MAPA AQUÍ")
+                                Text("GRÁFICO DEL MAPA AQUÍ", color = TextSecondary) // Usar color del tema
                             }
                             Spacer(modifier = Modifier.height(16.dp))
 
+                            // Los datos aquí siguen siendo falsos, se conectarán después
                             StationItem(number = "1", name = "Grau", distance = "~1.4 km") {
                                 onStationClick("Grau")
                             }
@@ -191,19 +188,19 @@ fun HomeScreenContent(
     }
 }
 
-// Composable para la tarjeta de estado
+// Composable para la tarjeta de estado (ajustado para usar colores del tema)
 @Composable
 fun EstadoSistemaCard(alerta: Alerta) {
-    val (icon, color) = when (alerta.tipo) {
-        "INFO" -> Icons.Default.CheckCircle to Color(0xFF2EBD85) // Verde
-        "WARNING", "ADVERTENCIA" -> Icons.Default.Warning to Color(0xFFF7C325) // Amarillo
-        "ERROR", "PELIGRO" -> Icons.Default.Info to Color.Red // Rojo
-        else -> Icons.Default.Info to Color.Gray
+    val (icon, color) = when (alerta.tipo.uppercase()) { // Usar uppercase para seguridad
+        "INFO" -> Icons.Default.CheckCircle to MetroLimaGreen
+        "WARNING", "ADVERTENCIA" -> Icons.Default.Warning to Color(0xFFFFA000) // Amarillo estándar
+        "ERROR", "PELIGRO" -> Icons.Default.Error to Color.Red // Ícono de error
+        else -> Icons.Default.Info to TextSecondary // Gris por defecto
     }
 
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = BackgroundLight), // Usar color del tema
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
@@ -224,19 +221,22 @@ fun EstadoSistemaCard(alerta: Alerta) {
                     text = alerta.titulo,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = Color.Black
+                    color = TextPrimary // Usar color del tema
                 )
-                Text(
-                    text = alerta.mensaje,
-                    fontSize = 14.sp,
-                    color = Color.Gray
-                )
+                // Mostrar mensaje solo si no está vacío
+                if (alerta.mensaje.isNotBlank()) {
+                    Text(
+                        text = alerta.mensaje,
+                        fontSize = 14.sp,
+                        color = TextSecondary // Usar color del tema
+                    )
+                }
             }
         }
     }
 }
 
-// Tu Composable original para StationItem
+// Tu Composable original para StationItem (ajustado para usar colores del tema)
 @Composable
 fun StationItem(number: String, name: String, distance: String, onClick: () -> Unit = {}) {
     Row(
@@ -250,32 +250,32 @@ fun StationItem(number: String, name: String, distance: String, onClick: () -> U
             modifier = Modifier
                 .size(24.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFEDE7F6)),
+                .background(MetroLimaPurple.copy(alpha = 0.1f)), // Fondo suave
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = number,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MetroLimaPurple // Usar color del tema
             )
         }
 
         Spacer(modifier = Modifier.width(16.dp))
 
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = name, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            Text(text = "Distancia aprox.: $distance", color = Color.Gray, fontSize = 14.sp)
+            Text(text = name, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextPrimary) // Usar color del tema
+            Text(text = "Distancia aprox.: $distance", color = TextSecondary, fontSize = 14.sp) // Usar color del tema
         }
 
         Icon(
             imageVector = Icons.Default.LocationOn,
             contentDescription = "Ubicación",
-            tint = MaterialTheme.colorScheme.primary
+            tint = MetroLimaPurple // Usar color del tema
         )
     }
 }
 
-// --- PREVIEWS PARA PROBAR LOS DIFERENTES ESTADOS ---
+// --- PREVIEWS (No necesitan el ViewModel real) ---
 @Preview(showBackground = true, name = "HomeScreen Loading")
 @Composable
 fun HomeScreenLoadingPreview() {
@@ -284,14 +284,24 @@ fun HomeScreenLoadingPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "HomeScreen Success")
+@Preview(showBackground = true, name = "HomeScreen Success - Info")
 @Composable
-fun HomeScreenSuccessPreview() {
+fun HomeScreenSuccessInfoPreview() {
     MetroLimaGOTheme {
-        val alerta = Alerta(1, "Servicio normal", "Operando con normalidad", "INFO")
+        val alerta = Alerta(1, "Servicio normal", "Operando con normalidad.", "INFO")
         HomeScreenContent(uiState = HomeUiState.Success(listOf(alerta)), onStationClick = {})
     }
 }
+
+@Preview(showBackground = true, name = "HomeScreen Success - Warning")
+@Composable
+fun HomeScreenSuccessWarningPreview() {
+    MetroLimaGOTheme {
+        val alerta = Alerta(2, "Demora en Línea 1", "Incidente menor en estación X.", "ADVERTENCIA")
+        HomeScreenContent(uiState = HomeUiState.Success(listOf(alerta)), onStationClick = {})
+    }
+}
+
 
 @Preview(showBackground = true, name = "HomeScreen Error")
 @Composable
@@ -300,3 +310,4 @@ fun HomeScreenErrorPreview() {
         HomeScreenContent(uiState = HomeUiState.Error("No se pudo cargar la información."), onStationClick = {})
     }
 }
+
