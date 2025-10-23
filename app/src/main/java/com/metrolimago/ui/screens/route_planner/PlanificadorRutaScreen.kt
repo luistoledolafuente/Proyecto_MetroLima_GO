@@ -1,18 +1,13 @@
 package com.metrolimago.ui.screens.route_planner
 
-
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.SwapVert
-import androidx.compose.material.icons.filled.Train
-import androidx.compose.material.icons.filled.TripOrigin // Asegúrate de importar este
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -23,52 +18,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-// import androidx.lifecycle.viewmodel.compose.viewModel // Se usará en Fase 3
-import com.metrolimago.data.model.EstacionEntity // Importar EstacionEntity
-import com.metrolimago.ui.theme.* // Tus colores
-
-// --- DEFINICIONES TEMPORALES (de Tarea 1.1 de Carlos) ---
-// Añadidas aquí para que el archivo compile mientras Luis no termina la Fase 3
-data class RutaPaso(val nombreEstacion: String)
-
-data class RutaResultado(
-    val pasos: List<RutaPaso> = emptyList(),
-    val tiempoEstimadoMinutos: Int = 0,
-    val mensajeError: String? = null
-)
-// -----------------------------------------------------------
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.metrolimago.data.model.EstacionEntity
+import com.metrolimago.ui.theme.* // Importa tus colores del tema
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanificadorRutaScreen(
     onBackClick: () -> Unit,
-    // La conexión final con la Factory la hará Luis
-    // planificadorViewModel: PlanificadorRutaViewModel = viewModel(...) // <-- Se añadirá después
+    // Conexión final al ViewModel usando la Factory
+    planificadorViewModel: PlanificadorRutaViewModel = viewModel(factory = PlanificadorRutaViewModel.Factory)
 ) {
-    // --- CONEXIÓN TEMPORAL (SOLO PARA QUE COMPILE Y VEAS EL DISEÑO) ---
-    // Simula el ViewModel para el Preview y para que compile
-    val todasLasEstaciones = listOf(
-        EstacionEntity(1, "Estación A", 1, "Distrito X"),
-        EstacionEntity(2, "Estación B", 1, "Distrito X"),
-        EstacionEntity(3, "Estación C", 1, "Distrito Y")
-    )
-    val origenSeleccionado: EstacionEntity? = todasLasEstaciones[0]
-    val destinoSeleccionado: EstacionEntity? = todasLasEstaciones[2]
-    val rutaCalculada = RutaResultado(
-        pasos = listOf(RutaPaso("Estación A"), RutaPaso("Estación B"), RutaPaso("Estación C")),
-        tiempoEstimadoMinutos = 6
-    )
-    // Funciones de placeholder
-    val seleccionarOrigen: (EstacionEntity?) -> Unit = {}
-    val seleccionarDestino: (EstacionEntity?) -> Unit = {}
-
-    // Colores de ejemplo (ajusta a tu ui.theme/Color.kt si es necesario)
-    val BackgroundLight = Color(0xFFF5F5F5)
-    val MetroLimaPurple = Color(0xFF6A3DE8)
-    val TextSecondary = Color.Gray
-    val TextPrimary = Color.Black
-    val CardBackground = Color.White
+    // Observa los datos del ViewModel
+    val todasLasEstaciones by planificadorViewModel.todasLasEstaciones.collectAsState()
+    val origenSeleccionado by planificadorViewModel.origenSeleccionado.collectAsState()
+    val destinoSeleccionado by planificadorViewModel.destinoSeleccionado.collectAsState()
+    val rutaCalculada by planificadorViewModel.rutaCalculada.collectAsState()
 
     Scaffold(
         topBar = {
@@ -90,75 +55,90 @@ fun PlanificadorRutaScreen(
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Selectores de Origen y Destino
+            // --- Selectores ---
             SelectorEstacion(
                 label = "Origen",
                 estacionSeleccionada = origenSeleccionado,
                 estacionesDisponibles = todasLasEstaciones,
-                onEstacionSelected = seleccionarOrigen
+                onEstacionSelected = { planificadorViewModel.seleccionarOrigen(it) } // Llama al ViewModel
             )
+
             Spacer(modifier = Modifier.height(8.dp))
-            // Icono para intercambiar (solo visual por ahora)
             Icon(
                 imageVector = Icons.Default.SwapVert,
                 contentDescription = "Intercambiar Origen/Destino",
                 tint = MetroLimaPurple,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(4.dp)
+                modifier = Modifier.align(Alignment.CenterHorizontally).padding(4.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))
+
             SelectorEstacion(
                 label = "Destino",
                 estacionSeleccionada = destinoSeleccionado,
                 estacionesDisponibles = todasLasEstaciones,
-                onEstacionSelected = seleccionarDestino
+                onEstacionSelected = { planificadorViewModel.seleccionarDestino(it) } // Llama al ViewModel
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Sección de Resultados
-            if (rutaCalculada.mensajeError != null) {
-                // Mostrar mensaje de error si existe
-                Text(rutaCalculada.mensajeError, color = Color.Red)
-            } else if (rutaCalculada.pasos.isNotEmpty()) {
-                // Mostrar la ruta si hay pasos
-                Text("Ruta Sugerida:", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.height(8.dp))
-                Text("Tiempo estimado: ${rutaCalculada.tiempoEstimadoMinutos} minutos", color = TextSecondary)
-                Spacer(modifier = Modifier.height(16.dp))
-                // Lista de pasos (usando LazyColumn por si son muchos)
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(CardBackground)
-                ) {
-                    itemsIndexed(rutaCalculada.pasos) { index, paso ->
-                        PasoRutaItem(
-                            paso = paso,
-                            esInicio = index == 0,
-                            esFin = index == rutaCalculada.pasos.size - 1
-                        )
-                        if (index < rutaCalculada.pasos.size - 1) {
-                            Divider(modifier = Modifier.padding(horizontal = 16.dp))
-                        }
-                    }
-                }
-            } else {
-                // Mensaje inicial o si no hay ruta válida
-                Text("Selecciona un origen y destino para calcular la ruta.")
-            }
+            // --- Resultados de la Ruta ---
+            ResultadosRutaSection(ruta = rutaCalculada)
         }
     }
 }
 
 /**
- * Composable para el selector de estación con Dropdown.
+ * Sección que muestra los resultados del cálculo de la ruta.
+ */
+@Composable
+private fun ResultadosRutaSection(ruta: RutaResultado) {
+    // Muestra error si existe
+    if (ruta.mensajeError != null) {
+        Text(ruta.mensajeError, color = Color.Red, modifier = Modifier.padding(vertical = 16.dp))
+    }
+    // Muestra la ruta si hay pasos calculados
+    else if (ruta.pasos.isNotEmpty()) {
+        Text("Ruta Sugerida:", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text("Tiempo estimado: ${ruta.tiempoEstimadoMinutos} minutos", color = TextSecondary)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Usamos LazyColumn por si la ruta es muy larga
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(12.dp))
+                .background(CardBackground)
+        ) {
+            itemsIndexed(ruta.pasos) { index, paso ->
+                PasoRutaItem(
+                    paso = paso,
+                    esInicio = index == 0,
+                    esFin = index == ruta.pasos.size - 1
+                )
+                // Añade un divisor entre pasos, excepto después del último
+                if (index < ruta.pasos.size - 1) {
+                    Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                }
+            }
+        }
+    }
+    // Mensaje por defecto si no hay origen/destino o la ruta está vacía
+    else {
+        Text(
+            "Selecciona un origen y destino para calcular la ruta.",
+            modifier = Modifier.padding(vertical = 16.dp),
+            color = TextSecondary
+        )
+    }
+}
+
+/**
+ * Composable reutilizable para el selector de estación con Dropdown.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectorEstacion(
+private fun SelectorEstacion(
     label: String,
     estacionSeleccionada: EstacionEntity?,
     estacionesDisponibles: List<EstacionEntity>,
@@ -172,21 +152,25 @@ fun SelectorEstacion(
     ) {
         OutlinedTextField(
             value = estacionSeleccionada?.nombre ?: "",
-            onValueChange = {}, // No editable directamente
+            onValueChange = {}, // El campo no es editable directamente
             readOnly = true,
             label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier
-                .menuAnchor() // Necesario para el dropdown
+                .menuAnchor() // Necesario para vincular el menú al campo
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = OutlinedTextFieldDefaults.colors()
+            shape = RoundedCornerShape(12.dp), // Bordes redondeados
+            colors = OutlinedTextFieldDefaults.colors( // Colores estándar
+                focusedBorderColor = MetroLimaPurple,
+                unfocusedBorderColor = DisabledGray
+            )
         )
+        // Menú desplegable
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false } // Cierra el menú si se hace clic fuera
         ) {
-            // Opción para deseleccionar
+            // Opción para limpiar la selección
             DropdownMenuItem(
                 text = { Text("Ninguna") },
                 onClick = {
@@ -194,7 +178,7 @@ fun SelectorEstacion(
                     expanded = false
                 }
             )
-            // Lista de estaciones disponibles
+            // Opciones para cada estación disponible
             estacionesDisponibles.forEach { estacion ->
                 DropdownMenuItem(
                     text = { Text(estacion.nombre) },
@@ -209,43 +193,59 @@ fun SelectorEstacion(
 }
 
 /**
- * Composable para mostrar un paso de la ruta.
+ * Composable reutilizable para mostrar un paso individual de la ruta.
  */
 @Composable
-fun PasoRutaItem(paso: RutaPaso, esInicio: Boolean, esFin: Boolean) {
-    // Colores de ejemplo (ajusta a tu ui.theme/Color.kt si es necesario)
-    val MetroLimaPurple = Color(0xFF6A3DE8)
-    val TextSecondary = Color.Gray
-    val TextPrimary = Color.Black
-
+private fun PasoRutaItem(paso: RutaPaso, esInicio: Boolean, esFin: Boolean) {
     Row(
         modifier = Modifier.padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Icono representativo del paso (origen, intermedio, fin)
         Icon(
             imageVector = when {
                 esInicio -> Icons.Default.TripOrigin
                 esFin -> Icons.Default.CheckCircle
-                else -> Icons.Default.Train
+                else -> Icons.Default.Train // Icono para estaciones intermedias
             },
-            contentDescription = null,
-            tint = if (esInicio || esFin) MetroLimaPurple else TextSecondary
+            contentDescription = null, // Descripción no necesaria para icono decorativo
+            tint = if (esInicio || esFin) MetroLimaPurple else TextSecondary // Color distintivo
         )
         Spacer(modifier = Modifier.width(16.dp))
+        // Nombre de la estación
         Text(
             text = paso.nombreEstacion,
-            fontWeight = if (esInicio || esFin) FontWeight.Bold else FontWeight.Normal,
+            fontWeight = if (esInicio || esFin) FontWeight.Bold else FontWeight.Normal, // Resalta origen/fin
             color = if (esInicio || esFin) TextPrimary else TextSecondary
         )
     }
 }
 
-
 // --- PREVIEW ---
-@Preview(showBackground = true)
+// El Preview principal es complejo por el ViewModel.
+// Es más útil previsualizar los componentes pequeños individualmente.
+@Preview(showBackground = true, name = "Selector Estación")
 @Composable
-fun PlanificadorRutaScreenPreview() {
+fun SelectorEstacionPreview() {
+    val estaciones = listOf(EstacionEntity(1, "Gamarra", 1, "La Victoria"), EstacionEntity(2, "Arriola", 1, "La Victoria"))
+    var seleccion: EstacionEntity? by remember { mutableStateOf(estaciones[0]) }
     MetroLimaGOTheme {
-        PlanificadorRutaScreen(onBackClick = {})
+        Column(Modifier.padding(16.dp)) {
+            SelectorEstacion("Origen", seleccion, estaciones) { seleccion = it }
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Paso de Ruta")
+@Composable
+fun PasoRutaItemPreview() {
+    MetroLimaGOTheme {
+        Column {
+            PasoRutaItem(paso = RutaPaso("Estación Inicial"), esInicio = true, esFin = false)
+            Divider()
+            PasoRutaItem(paso = RutaPaso("Estación Intermedia"), esInicio = false, esFin = false)
+            Divider()
+            PasoRutaItem(paso = RutaPaso("Estación Final"), esInicio = false, esFin = true)
+        }
     }
 }

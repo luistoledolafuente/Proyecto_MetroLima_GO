@@ -3,57 +3,69 @@ package com.metrolimago.ui.navigation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.metrolimago.ui.screens.home.HomeScreen
+import com.metrolimago.ui.screens.route_planner.PlanificadorRutaScreen // Asegúrate que esta pantalla exista
 import com.metrolimago.ui.screens.station_list.ListaEstacionesScreen
 import com.metrolimago.ui.screens.station_detail.DetalleEstacionScreen
 
+/**
+ * Define el grafo de navegación principal de la aplicación.
+ * Gestiona qué pantalla se muestra según la ruta actual.
+ *
+ * @param navController El controlador de navegación gestionado por MainScreen.
+ */
 @Composable
 fun AppNavigation(navController: NavHostController) {
 
-    // Mantenemos tu startDestination. Si quieres que empiece en Home, cámbialo a "home".
-    NavHost(navController = navController, startDestination = "station_list") {
+    // El NavHost es el contenedor que intercambia las pantallas (Composables).
+    // startDestination define la pantalla inicial.
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
 
-        composable(route = "home") {
+        // --- Definición de cada destino de navegación ---
+
+        composable(route = Screen.Home.route) {
             HomeScreen(
-                // Si la HomeScreen también necesita navegar al detalle, se haría igual que la lista.
-                // onStationClick = { stationName ->
-                //     navController.navigate("station_detail_screen/$stationName")
-                // }
+                // onStationClick = { stationName -> navController.navigate(Screen.StationDetail.createRoute(stationName)) }
             )
         }
 
-        composable(route = "station_list") {
+        composable(route = Screen.StationList.route) {
             ListaEstacionesScreen(
                 onStationClick = { stationName ->
-                    // Tu lógica de navegación funciona perfecto. No se cambia.
-                    navController.navigate("station_detail_screen/$stationName")
+                    // Navega a la pantalla de detalle usando la ruta segura de Screen
+                    navController.navigate(Screen.StationDetail.createRoute(stationName))
                 }
             )
         }
 
-        composable(route = "station_detail_screen/{stationName}") { backStackEntry ->
-            val stationName = backStackEntry.arguments?.getString("stationName")
+        composable(
+            route = Screen.StationDetail.route, // Ruta base: "station_detail/{stationId}"
+            arguments = listOf(navArgument("stationId") { type = NavType.StringType }) // Define el argumento
+        ) { backStackEntry ->
+            // Extrae el argumento "stationId" de la ruta
+            val stationName = backStackEntry.arguments?.getString("stationId")
 
-            // --- ¡AQUÍ ESTÁ LA MEJORA! ---
-            // Ahora le pasamos la función para que el botón "atrás" funcione.
             DetalleEstacionScreen(
-                stationName = stationName ?: "Sin nombre",
+                stationName = stationName ?: "Estación Desconocida", // Valor por defecto si falla
                 onBackClick = {
-                    navController.popBackStack()
+                    navController.popBackStack() // Acción para el botón "atrás"
                 }
             )
         }
 
-        // También he añadido las pantallas temporales para las otras rutas
-        // para que la barra de navegación no falle si haces clic en ellas.
-        composable(route = "route_planner") {
-            Text("PANTALLA DE PLANIFICADOR DE RUTA")
+        composable(route = Screen.RoutePlanner.route) {
+            PlanificadorRutaScreen(
+                onBackClick = { navController.popBackStack() } // Acción para el botón "atrás"
+            )
         }
 
-        composable(route = "settings") {
-            Text("PANTALLA DE AJUSTES")
+        composable(route = Screen.Settings.route) {
+            // TODO: Crear e integrar la pantalla ConfiguracionScreen aquí
+            Text("PANTALLA DE AJUSTES (SettingsScreen)")
         }
     }
 }
