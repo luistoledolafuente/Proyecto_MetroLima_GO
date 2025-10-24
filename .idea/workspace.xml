@@ -67,20 +67,38 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a7abe808-e78c-4a25-bae1-1af1345cac03" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/model/RutaPaso.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/model/RutaResultado.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/repository/PlanificadorRutaRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.13/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.13/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.13/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.13/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.13/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/MetroLimaApp.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/MetroLimaApp.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/dao/EstacionDao.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/dao/EstacionDao.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/db/MetroDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/db/MetroDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/model/Alerta.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/model/Alerta.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/model/EstacionEntity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/model/EstacionEntity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/remote/MetroApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/remote/MetroApiService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/repository/MetroRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/data/repository/MetroRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/components/.gitkeep" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/navigation/AppNavigation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/navigation/AppNavigation.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/navigation/Screen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/navigation/Screen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/home/HomeScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/home/HomeScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/home/HomeViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/home/HomeViewModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/route_planner/PlanificadorRutaScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/route_planner/PlanificadorRutaScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/route_planner/PlanificadorRutaViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/route_planner/PlanificadorRutaViewModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/station_detail/DetalleEstacionScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/station_detail/DetalleEstacionScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/station_list/ListaEstacionesScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/station_list/ListaEstacionesScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/station_list/ListaEstacionesViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/screens/station_list/ListaEstacionesViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/theme/Theme.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/metrolimago/ui/theme/Theme.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +108,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=LN6TGAOFRK9XSGX4)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -118,6 +136,7 @@
       <list>
         <option value="resourceFile" />
         <option value="Kotlin File" />
+        <option value="Class" />
         <option value="Kotlin Class" />
       </list>
     </option>
@@ -274,12 +293,12 @@
       <map>
         <entry key="com.metrolimago">
           <value>
-            <CheckInfo lastCheckTimestamp="1761107722524" />
+            <CheckInfo lastCheckTimestamp="1761326270488" />
           </value>
         </entry>
         <entry key="com.metrolimago.test">
           <value>
-            <CheckInfo lastCheckTimestamp="1761107722524" />
+            <CheckInfo lastCheckTimestamp="1761326270487" />
           </value>
         </entry>
       </map>

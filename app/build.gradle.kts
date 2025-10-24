@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.metrolimago"
-    compileSdkVersion(rootProject.extra["compileSdkVersion"] as Int)
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.metrolimago"
@@ -52,6 +52,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:<version>")
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -89,4 +90,13 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion") // Añadido para asegurar la compatibilidad
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.runtime:runtime")
+
+    // Jetpack Compose Material3
+    implementation("androidx.compose.material3:material3:1.2.0")
+
+    // Material3 window size & other utilities (opcional pero recomendado)
+    implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
+
+    // Compose runtime
+    implementation("androidx.compose.runtime:runtime:1.5.0")
 }

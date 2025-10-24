@@ -1,21 +1,25 @@
 package com.metrolimago.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+
+private val LightColors = lightColorScheme(
+    primary = Color(0xFF1E88E5),
+    onPrimary = Color.White,
+    secondary = Color(0xFF90CAF9),
+    onSecondary = Color.Black,
+    background = Color(0xFFF0F0F0),
+    onBackground = Color.Black,
+    surface = Color.White,
+    onSurface = Color.Black
+)
 
 @Composable
-fun MetroLimaGOTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
-    // Selecciona el esquema de color según el modo del sistema
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-
-    // Aplica el esquema con Material 3
+fun MetroLimaGOTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
+        colorScheme = LightColors,
+        typography = Typography(),
         content = content
     )
 }

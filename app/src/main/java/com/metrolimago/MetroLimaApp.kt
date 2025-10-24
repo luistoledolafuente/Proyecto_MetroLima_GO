@@ -1,6 +1,8 @@
 package com.metrolimago
 
 import android.app.Application
+import androidx.room.Room
+import com.metrolimago.data.dao.EstacionDao
 import com.metrolimago.data.db.MetroDatabase
 import com.metrolimago.data.remote.FAKE_API_BASE_URL
 import com.metrolimago.data.remote.MetroApiService
@@ -12,26 +14,26 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MetroLimaApp : Application() {
 
-    val applicationScope by lazy { CoroutineScope(SupervisorJob()) }
+    private val applicationScope = CoroutineScope(SupervisorJob())
 
-    // Base de datos (usa el método recomendado)
-    val database by lazy { MetroDatabase.getDatabase(this, applicationScope) }
+    val database: MetroDatabase by lazy {
+        Room.databaseBuilder(
+            this,
+            MetroDatabase::class.java,
+            "metro_database"
+        ).build()
+    }
 
-    // --- NUEVO: configuración de Retrofit ---
-    private val retrofit by lazy {
+    val estacionDao: EstacionDao by lazy { database.estacionDao() }
+
+    private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(FAKE_API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
-    // Instancia del servicio API
-    private val apiService by lazy {
-        retrofit.create(MetroApiService::class.java)
-    }
+    val apiService: MetroApiService by lazy { retrofit.create(MetroApiService::class.java) }
 
-    // Repositorio con ambas dependencias
-    val repository by lazy {
-        MetroRepository(database.estacionDao(), apiService)
-    }
+    val repository: MetroRepository by lazy { MetroRepository(estacionDao) }
 }
