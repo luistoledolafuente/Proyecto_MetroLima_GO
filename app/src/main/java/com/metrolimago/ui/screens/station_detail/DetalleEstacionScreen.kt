@@ -1,6 +1,5 @@
 package com.metrolimago.ui.screens.station_detail
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,54 +14,45 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.metrolimago.R // Asegúrate de que R se importe para los íconos/imágenes
-import com.metrolimago.ui.theme.*
+import com.metrolimago.data.model.EstacionEntity
+import com.metrolimago.ui.theme.MetroLimaGOTheme
 
-/**
- * Pantalla de detalle de estación, rediseñada para ser idéntica al prototipo final.
- *
- * @param stationName El nombre de la estación a mostrar.
- * @param onBackClick Función para manejar el clic en el botón "Atrás".
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetalleEstacionScreen(
     stationName: String,
     onBackClick: () -> Unit
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+
     Scaffold(
-        containerColor = BackgroundLight,
+        containerColor = colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         "Estaciones",
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        color = colorScheme.onSurface
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Volver atrás"
+                            contentDescription = "Volver atrás",
+                            tint = colorScheme.onSurface
                         )
                     }
                 },
-                actions = {
-                    // Espacio en blanco para centrar el título correctamente
-                    Spacer(modifier = Modifier.width(48.dp))
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundLight)
+                actions = { Spacer(modifier = Modifier.width(48.dp)) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = colorScheme.surface)
             )
         }
     ) { paddingValues ->
@@ -75,7 +65,6 @@ fun DetalleEstacionScreen(
         ) {
             item { Spacer(modifier = Modifier.height(16.dp)) }
 
-            // 1. Tarjeta principal con la información e imagen
             item {
                 MainStationInfoCard(
                     stationName = stationName,
@@ -86,20 +75,21 @@ fun DetalleEstacionScreen(
 
             item { Spacer(modifier = Modifier.height(24.dp)) }
 
-            // 2. Botones de acción
             item { ActionButtonsRow() }
 
             item { Spacer(modifier = Modifier.height(24.dp)) }
 
-            // 3. Secciones de Servicios y Horarios
             item {
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(CardBackground)
-                    .padding(16.dp)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(colorScheme.surfaceVariant)
+                        .padding(16.dp)
                 ) {
-                    ServicesSection(servicios = listOf("WiFi Gratuito", "Baños Públicos", "Seguridad 24h", "Accesibilidad"))
+                    ServicesSection(
+                        servicios = listOf("WiFi gratuito", "Baños públicos", "Seguridad 24h", "Accesibilidad")
+                    )
                     Divider(modifier = Modifier.padding(vertical = 16.dp))
                     HorariosSection()
                 }
@@ -110,43 +100,57 @@ fun DetalleEstacionScreen(
     }
 }
 
-// --- COMPONENTES REUTILIZABLES PARA EL NUEVO DISEÑO ---
+// --- COMPONENTES ---
 
 @Composable
 private fun MainStationInfoCard(stationName: String, linea: String, distrito: String) {
+    val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = CardBackground)
+        colors = CardDefaults.cardColors(containerColor = colorScheme.surfaceVariant)
     ) {
         Column {
-            // Placeholder para la imagen
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp)
-                    .background(DisabledGray),
+                    .background(colorScheme.outlineVariant),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Imagen de la Estación", color = TextSecondary)
+                Text("Imagen de la estación", color = colorScheme.onSurfaceVariant)
             }
 
-            // Contenido de texto
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = stationName,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = TextPrimary
+                    color = colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 InfoRow(
-                    icon = { Box(modifier = Modifier.size(12.dp).clip(CircleShape).background(MetroLimaGreen)) },
+                    icon = {
+                        Box(
+                            modifier = Modifier
+                                .size(12.dp)
+                                .clip(CircleShape)
+                                .background(colorScheme.primary)
+                        )
+                    },
                     text = linea
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 InfoRow(
-                    icon = { Icon(imageVector = Icons.Default.LocationOn, contentDescription = null, tint = TextSecondary) },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = null,
+                            tint = colorScheme.onSurfaceVariant
+                        )
+                    },
                     text = "Distrito: $distrito"
                 )
             }
@@ -156,41 +160,46 @@ private fun MainStationInfoCard(stationName: String, linea: String, distrito: St
 
 @Composable
 private fun ActionButtonsRow() {
+    val colorScheme = MaterialTheme.colorScheme
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Button(
-            onClick = { /* TODO: Lógica para planificar ruta */ },
+            onClick = { /* TODO: Lógica de ruta */ },
             modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(containerColor = MetroLimaPurple),
+            colors = ButtonDefaults.buttonColors(containerColor = colorScheme.primary),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Icon(imageVector = Icons.Default.Route, contentDescription = "Planificar")
+            Icon(Icons.Default.Route, contentDescription = "Planificar", tint = colorScheme.onPrimary)
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Planificar Ruta")
+            Text("Planificar Ruta", color = colorScheme.onPrimary)
         }
         OutlinedButton(
-            onClick = { /* TODO: Lógica para guardar */ },
+            onClick = { /* TODO: Guardar */ },
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(12.dp),
-            border = ButtonDefaults.outlinedButtonBorder.copy(brush = SolidColor(MetroLimaPurple))
+            border = ButtonDefaults.outlinedButtonBorder.copy(brush = SolidColor(colorScheme.primary))
         ) {
-            Icon(imageVector = Icons.Outlined.FavoriteBorder, contentDescription = "Guardar", tint = MetroLimaPurple)
+            Icon(Icons.Outlined.FavoriteBorder, contentDescription = "Guardar", tint = colorScheme.primary)
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Guardar", color = MetroLimaPurple)
+            Text("Guardar", color = colorScheme.primary)
         }
     }
 }
 
 @Composable
 private fun ServicesSection(servicios: List<String>) {
+    val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+
     Column {
         Text(
             text = "Servicios",
-            style = MaterialTheme.typography.titleLarge,
+            style = typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(16.dp))
         servicios.chunked(2).forEach { rowItems ->
@@ -198,7 +207,13 @@ private fun ServicesSection(servicios: List<String>) {
                 rowItems.forEach { servicio ->
                     Box(modifier = Modifier.weight(1f)) {
                         InfoRow(
-                            icon = { Icon(imageVector = Icons.Default.Check, contentDescription = null, tint = MetroLimaGreen) },
+                            icon = {
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = colorScheme.primary
+                                )
+                            },
                             text = servicio
                         )
                     }
@@ -211,41 +226,40 @@ private fun ServicesSection(servicios: List<String>) {
 
 @Composable
 private fun HorariosSection() {
+    val colorScheme = MaterialTheme.colorScheme
+    val typography = MaterialTheme.typography
+
     Column {
         Text(
             text = "Horarios",
-            style = MaterialTheme.typography.titleLarge,
+            style = typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = TextPrimary
+            color = colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(16.dp))
-        InfoRow(icon = { Icon(Icons.Default.Schedule, null, tint = TextSecondary) }, text = "L-V: 05:00 - 22:00")
+        InfoRow({ Icon(Icons.Default.Schedule, null, tint = colorScheme.onSurfaceVariant) }, "L–V: 05:00 - 22:00")
         Spacer(modifier = Modifier.height(8.dp))
-        InfoRow(icon = { Icon(Icons.Default.Schedule, null, tint = TextSecondary) }, text = "Sáb: 06:00 - 22:00")
+        InfoRow({ Icon(Icons.Default.Schedule, null, tint = colorScheme.onSurfaceVariant) }, "Sáb: 06:00 - 22:00")
         Spacer(modifier = Modifier.height(8.dp))
-        InfoRow(icon = { Icon(Icons.Default.Schedule, null, tint = TextSecondary) }, text = "Dom/Fer: 06:00 - 21:00")
+        InfoRow({ Icon(Icons.Default.Schedule, null, tint = colorScheme.onSurfaceVariant) }, "Dom/Fer: 06:00 - 21:00")
     }
 }
 
 @Composable
 private fun InfoRow(icon: @Composable () -> Unit, text: String) {
+    val colorScheme = MaterialTheme.colorScheme
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
         icon()
         Spacer(modifier = Modifier.width(12.dp))
-        Text(text = text, color = TextSecondary, fontSize = 16.sp)
+        Text(text = text, color = colorScheme.onSurfaceVariant, fontSize = 16.sp)
     }
 }
-
 
 // --- PREVIEW ---
 @Preview(showBackground = true)
 @Composable
-fun DetalleEstacionScreenNewPreview() {
+fun DetalleEstacionScreenPreview() {
     MetroLimaGOTheme {
-        DetalleEstacionScreen(
-            stationName = "Estación Gamarra",
-            onBackClick = {}
-        )
+        DetalleEstacionScreen(stationName = "Estación Gamarra", onBackClick = {})
     }
 }
-

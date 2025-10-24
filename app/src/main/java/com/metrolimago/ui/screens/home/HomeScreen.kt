@@ -1,6 +1,5 @@
 package com.metrolimago.ui.screens.home
 
-// Imports de UI necesarios
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,40 +16,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel // Import para viewModel()
-
-// Imports del modelo y tema
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.metrolimago.R
 import com.metrolimago.data.model.Alerta
 import com.metrolimago.ui.theme.*
 
 @Composable
 fun HomeScreen(
-    // --- CONEXIÓN FINAL ---
-    // Usamos viewModel() con la Factory para obtener la instancia real
     homeViewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory),
     onStationClick: (String) -> Unit = {}
 ) {
-    // Obtenemos el estado REAL del ViewModel usando collectAsState
     val uiState by homeViewModel.uiState.collectAsState()
-
-    // Llamamos al Composable que contiene la UI, pasándole el estado real
-    HomeScreenContent(
-        uiState = uiState,
-        onStationClick = onStationClick
-    )
+    HomeScreenContent(uiState = uiState, onStationClick = onStationClick)
 }
 
-/**
- * Este Composable contiene la UI real y reacciona al estado (uiState).
- * No necesita cambios respecto a la versión de Flavio.
- */
 @Composable
 fun HomeScreenContent(
     uiState: HomeUiState,
@@ -59,15 +42,20 @@ fun HomeScreenContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF4F6F9))
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item { Spacer(modifier = Modifier.height(32.dp)) }
 
-        // --- LOGO ---
+        // --- Sección del Logo ---
         item {
-            Text(text = "Bienvenido a", fontSize = 16.sp, color = Color.Gray)
+            Text(
+                text = "Bienvenido a",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
@@ -78,35 +66,49 @@ fun HomeScreenContent(
                 Spacer(modifier = Modifier.width(12.dp))
                 Text(
                     text = "MetroLima\nGO",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 26.sp,
-                    color = TextPrimary // Usar color del tema
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 )
             }
         }
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
-        // --- SECCIÓN DE ESTADO DEL SISTEMA (REACTIVA) ---
+        // --- Estado del Sistema ---
         item {
             when (uiState) {
                 is HomeUiState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.padding(vertical = 24.dp))
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(vertical = 24.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
+
                 is HomeUiState.Success -> {
-                    val primeraAlerta = uiState.alertas.firstOrNull()
-                    EstadoSistemaCard(alerta = primeraAlerta ?: Alerta(0, "Todos los sistemas operativos", "Servicio normal", "INFO"))
+                    val alerta = uiState.alertas.firstOrNull()
+                    EstadoSistemaCard(
+                        alerta = alerta ?: Alerta(
+                            0,
+                            "Todos los sistemas operativos",
+                            "Servicio normal",
+                            "INFO"
+                        )
+                    )
                 }
+
                 is HomeUiState.Error -> {
                     Card(
                         shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.Red.copy(alpha = 0.1f))
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer
+                        )
                     ) {
                         Text(
                             text = uiState.message,
-                            color = Color.Red,
-                            modifier = Modifier.padding(16.dp)
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                            modifier = Modifier.padding(16.dp),
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                 }
@@ -115,14 +117,17 @@ fun HomeScreenContent(
 
         item { Spacer(modifier = Modifier.height(24.dp)) }
 
-        // --- TARJETA DE ESTACIONES CERCANAS ---
+        // --- Tarjeta de Estaciones Cercanas ---
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = MetroLimaPurple) // Usar color del tema
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 Column {
+                    // Cabecera
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -132,52 +137,60 @@ fun HomeScreenContent(
                     ) {
                         Text(
                             text = "Estaciones Cercanas",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold
+                            style = MaterialTheme.typography.titleMedium.copy(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontWeight = FontWeight.Bold
+                            )
                         )
-                        TextButton(onClick = { /* TODO */ }) {
-                            // Considerar usar un Icon vectorial si tienes uno para "ubicarme"
-                            // Icon(Icons.Default.MyLocation, ...)
+                        TextButton(onClick = { /* TODO: Implementar lógica de ubicación */ }) {
                             Icon(
-                                painter = painterResource(id = R.drawable.ic_ubicarme), // Asegúrate que este drawable existe
+                                painter = painterResource(id = R.drawable.ic_ubicarme),
                                 contentDescription = "Ubicarme",
-                                tint = Color.White,
+                                tint = MaterialTheme.colorScheme.onPrimary,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = "Ubicarme", color = Color.White)
+                            Text(
+                                text = "Ubicarme",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            )
                         }
                     }
 
+                    // Contenido inferior
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                color = BackgroundLight, // Usar color del tema
-                                shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(
+                                    bottomStart = 20.dp,
+                                    bottomEnd = 20.dp
+                                )
                             )
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
+                            // Placeholder del mapa
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(150.dp)
                                     .clip(RoundedCornerShape(16.dp))
-                                    .background(DisabledGray), // Usar color del tema
+                                    .background(MaterialTheme.colorScheme.surfaceVariant),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("GRÁFICO DEL MAPA AQUÍ", color = TextSecondary) // Usar color del tema
+                                Text(
+                                    "GRÁFICO DEL MAPA AQUÍ",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-
-                            // Los datos aquí siguen siendo falsos, se conectarán después
-                            StationItem(number = "1", name = "Grau", distance = "~1.4 km") {
-                                onStationClick("Grau")
-                            }
-                            StationItem(number = "2", name = "Gamarra", distance = "~5.3 km") {
-                                onStationClick("Gamarra")
-                            }
+                            StationItem("1", "Grau", "~1.4 km") { onStationClick("Grau") }
+                            StationItem("2", "Gamarra", "~5.3 km") { onStationClick("Gamarra") }
                         }
                     }
                 }
@@ -188,19 +201,20 @@ fun HomeScreenContent(
     }
 }
 
-// Composable para la tarjeta de estado (ajustado para usar colores del tema)
 @Composable
 fun EstadoSistemaCard(alerta: Alerta) {
-    val (icon, color) = when (alerta.tipo.uppercase()) { // Usar uppercase para seguridad
+    val (icon, color) = when (alerta.tipo.uppercase()) {
         "INFO" -> Icons.Default.CheckCircle to MetroLimaGreen
-        "WARNING", "ADVERTENCIA" -> Icons.Default.Warning to Color(0xFFFFA000) // Amarillo estándar
-        "ERROR", "PELIGRO" -> Icons.Default.Error to Color.Red // Ícono de error
-        else -> Icons.Default.Info to TextSecondary // Gris por defecto
+        "WARNING", "ADVERTENCIA" -> Icons.Default.Warning to MaterialTheme.colorScheme.tertiary
+        "ERROR", "PELIGRO" -> Icons.Default.Error to MaterialTheme.colorScheme.error
+        else -> Icons.Default.Info to MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     Card(
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = BackgroundLight), // Usar color del tema
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
@@ -219,16 +233,17 @@ fun EstadoSistemaCard(alerta: Alerta) {
             Column {
                 Text(
                     text = alerta.titulo,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = TextPrimary // Usar color del tema
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold
+                    )
                 )
-                // Mostrar mensaje solo si no está vacío
                 if (alerta.mensaje.isNotBlank()) {
                     Text(
                         text = alerta.mensaje,
-                        fontSize = 14.sp,
-                        color = TextSecondary // Usar color del tema
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     )
                 }
             }
@@ -236,7 +251,6 @@ fun EstadoSistemaCard(alerta: Alerta) {
     }
 }
 
-// Tu Composable original para StationItem (ajustado para usar colores del tema)
 @Composable
 fun StationItem(number: String, name: String, distance: String, onClick: () -> Unit = {}) {
     Row(
@@ -248,40 +262,48 @@ fun StationItem(number: String, name: String, distance: String, onClick: () -> U
     ) {
         Box(
             modifier = Modifier
-                .size(24.dp)
+                .size(28.dp)
                 .clip(CircleShape)
-                .background(MetroLimaPurple.copy(alpha = 0.1f)), // Fondo suave
+                .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = number,
-                fontWeight = FontWeight.Bold,
-                color = MetroLimaPurple // Usar color del tema
+                style = MaterialTheme.typography.labelSmall.copy(
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontWeight = FontWeight.Bold
+                )
             )
         }
-
         Spacer(modifier = Modifier.width(16.dp))
-
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = name, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = TextPrimary) // Usar color del tema
-            Text(text = "Distancia aprox.: $distance", color = TextSecondary, fontSize = 14.sp) // Usar color del tema
+            Text(
+                text = name,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Text(
+                text = "Distancia aprox.: $distance",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            )
         }
-
         Icon(
             imageVector = Icons.Default.LocationOn,
             contentDescription = "Ubicación",
-            tint = MetroLimaPurple // Usar color del tema
+            tint = MaterialTheme.colorScheme.primary
         )
     }
 }
 
-// --- PREVIEWS (No necesitan el ViewModel real) ---
+// --- PREVIEWS ---
 @Preview(showBackground = true, name = "HomeScreen Loading")
 @Composable
 fun HomeScreenLoadingPreview() {
-    MetroLimaGOTheme {
-        HomeScreenContent(uiState = HomeUiState.Loading, onStationClick = {})
-    }
+    MetroLimaGOTheme { HomeScreenContent(uiState = HomeUiState.Loading, onStationClick = {}) }
 }
 
 @Preview(showBackground = true, name = "HomeScreen Success - Info")
@@ -302,7 +324,6 @@ fun HomeScreenSuccessWarningPreview() {
     }
 }
 
-
 @Preview(showBackground = true, name = "HomeScreen Error")
 @Composable
 fun HomeScreenErrorPreview() {
@@ -310,4 +331,3 @@ fun HomeScreenErrorPreview() {
         HomeScreenContent(uiState = HomeUiState.Error("No se pudo cargar la información."), onStationClick = {})
     }
 }
-

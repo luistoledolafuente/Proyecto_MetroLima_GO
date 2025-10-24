@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.metrolimago"
-    compileSdk = 36
+    compileSdkVersion(rootProject.extra["compileSdkVersion"] as Int)
 
     defaultConfig {
         applicationId = "com.metrolimago"
