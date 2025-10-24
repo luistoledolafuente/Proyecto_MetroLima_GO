@@ -1,72 +1,90 @@
 package com.metrolimago.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.metrolimago.ui.screens.home.HomeScreen
-import com.metrolimago.ui.screens.route_planner.PlanificadorRutaScreen // Asegúrate que esta pantalla exista
+import com.metrolimago.ui.screens.route_planner.PlanificadorRutaScreen
 import com.metrolimago.ui.screens.station_list.ListaEstacionesScreen
-import com.metrolimago.ui.screens.station_detail.DetalleEstacionScreen
 
-/**
- * Define el grafo de navegación principal de la aplicación.
- * Gestiona qué pantalla se muestra según la ruta actual.
- *
- * @param navController El controlador de navegación gestionado por MainScreen.
- */
 @Composable
 fun AppNavigation(navController: NavHostController) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Home.route // Iniciamos en Home
+    ) {
 
-    // El NavHost es el contenedor que intercambia las pantallas (Composables).
-    // startDestination define la pantalla inicial.
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+        // --- PANTALLAS PRINCIPALES (Tabs con FADE) ---
 
-        // --- Definición de cada destino de navegación ---
-
-        composable(route = Screen.Home.route) {
+        composable(
+            route = Screen.Home.route,
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(300)) },
+            popExitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) {
             HomeScreen(
-                // onStationClick = { stationName -> navController.navigate(Screen.StationDetail.createRoute(stationName)) }
-            )
-        }
-
-        composable(route = Screen.StationList.route) {
-            ListaEstacionesScreen(
-                onStationClick = { stationName ->
-                    // Navega a la pantalla de detalle usando la ruta segura de Screen
-                    navController.navigate(Screen.StationDetail.createRoute(stationName))
+                onStationClick = { stationId ->
+                    navController.navigate("${Screen.StationDetail.route}/$stationId")
                 }
             )
         }
 
         composable(
-            route = Screen.StationDetail.route, // Ruta base: "station_detail/{stationId}"
-            arguments = listOf(navArgument("stationId") { type = NavType.StringType }) // Define el argumento
-        ) { backStackEntry ->
-            // Extrae el argumento "stationId" de la ruta
-            val stationName = backStackEntry.arguments?.getString("stationId")
-
-            DetalleEstacionScreen(
-                stationName = stationName ?: "Estación Desconocida", // Valor por defecto si falla
-                onBackClick = {
-                    navController.popBackStack() // Acción para el botón "atrás"
+            route = Screen.StationList.route,
+            enterTransition = { fadeIn(animationSpec = tween(300)) },
+            exitTransition = { fadeOut(animationSpec = tween(300)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(300)) },
+            popExitTransition = { fadeOut(animationSpec = tween(300)) }
+        ) {
+            ListaEstacionesScreen(
+                onStationClick = { stationName ->
+                    navController.navigate("${Screen.StationDetail.route}/$stationName")
                 }
             )
         }
 
-        composable(route = Screen.RoutePlanner.route) {
+        // --- PANTALLAS SECUNDARIAS (con SLIDE) ---
+
+        composable(
+            route = Screen.RoutePlanner.route,
+            enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(300)) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(300)) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(300)) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(300)) }
+        ) {
             PlanificadorRutaScreen(
-                onBackClick = { navController.popBackStack() } // Acción para el botón "atrás"
+                onBackClick = { navController.popBackStack() }
             )
         }
 
-        composable(route = Screen.Settings.route) {
-            // TODO: Crear e integrar la pantalla ConfiguracionScreen aquí
-            Text("PANTALLA DE AJUSTES (SettingsScreen)")
+        composable(
+            route = Screen.Settings.route,
+            enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(300)) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(300)) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(300)) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(300)) }
+        ) {
+            Text("PANTALLA DE AJUSTES") // (Placeholder)
+        }
+
+        composable(
+            route = Screen.StationDetail.route,
+            // arguments = ... (Asegúrate que Screen.kt tenga la ruta "station_detail_screen/{stationId}")
+            enterTransition = { slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(300)) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(300)) },
+            popEnterTransition = { slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(300)) },
+            popExitTransition = { slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(300)) }
+        ) { backStackEntry ->
+            val stationId = backStackEntry.arguments?.getString("stationId")
+            Text("PANTALLA DE DETALLE para la estación: $stationId") // (Reemplaza con tu DetalleEstacionScreen)
         }
     }
 }
-
