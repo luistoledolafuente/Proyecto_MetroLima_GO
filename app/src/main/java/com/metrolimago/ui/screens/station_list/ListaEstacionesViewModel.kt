@@ -1,4 +1,4 @@
-package com.metrolimago.ui.screens.station_list // Paquete correcto
+package com.metrolimago.ui.screens.station_list // Paquete corregido
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +16,7 @@ data class ListaEstacionesUiState(
     val isLoading: Boolean = false
 )
 
-// Nombre de clase correcto
+// Nombre de clase corregido
 class ListaEstacionesViewModel(private val repository: MetroRepository) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -48,7 +48,6 @@ class ListaEstacionesViewModel(private val repository: MetroRepository) : ViewMo
         _searchQuery.value = newQuery
     }
 
-    // Factory correcto
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {

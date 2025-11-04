@@ -4,30 +4,66 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.metrolimago.data.model.EstacionEntity
 
 @Composable
 fun ListaEstacionesScreen(
-    onStationClick: (String) -> Unit
+    onStationClick: (String) -> Unit,
+    viewModel: ListaEstacionesViewModel = viewModel(factory = ListaEstacionesViewModel.Factory)
 ) {
-    val estaciones = listOf(
-        EstacionEntity(1, "Gamarra", "1", "La Victoria", -12.066, -77.02, "05:00-23:00"),
-        EstacionEntity(2, "Arriola", "1", "La Victoria", -12.065, -77.025, "05:00-23:00")
-    )
+    val uiState by viewModel.uiState.collectAsState()
 
-    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        items(estaciones) { estacion ->
-            Text(
-                text = "${estacion.nombre} - Línea ${estacion.linea}",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onStationClick(estacion.nombre) }
-                    .padding(16.dp)
-            )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Barra de Búsqueda
+        OutlinedTextField(
+            value = uiState.searchQuery,
+            onValueChange = viewModel::onSearchQueryChanged,
+            label = { Text("Buscar estación...") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Lista de Estaciones
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(uiState.estaciones) { estacion ->
+                EstacionItem(estacion = estacion, onClick = onStationClick)
+            }
+        }
+    }
+}
+
+@Composable
+fun EstacionItem(
+    estacion: EstacionEntity,
+    onClick: (String) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick(estacion.nombre) } // Usa el ID o nombre
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = estacion.nombre, style = MaterialTheme.typography.bodyLarge)
+            // Aquí podrías poner el ícono de la línea
         }
     }
 }

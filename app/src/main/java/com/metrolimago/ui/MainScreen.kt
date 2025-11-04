@@ -18,7 +18,6 @@ import androidx.navigation.compose.rememberNavController
 import com.metrolimago.R
 import com.metrolimago.ui.navigation.AppNavigation
 import com.metrolimago.ui.navigation.Screen
-
 // No se necesitan cambios en BottomNavItem
 data class BottomNavItem(val label: String, val icon: Int, val route: String)
 

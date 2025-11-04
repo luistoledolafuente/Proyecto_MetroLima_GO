@@ -1,85 +1,108 @@
 package com.metrolimago.ui.screens.route_planner
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext // <-- AÑADIDO
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.metrolimago.MetroLimaApp // <-- AÑADIDO
-// import com.metrolimago.data.repository.PlanificadorRutaRepository // <-- ELIMINADO
+import com.metrolimago.MetroLimaApp
+import com.metrolimago.data.model.EstacionEntity
 
 @Composable
 fun PlanificadorRutaScreen(
-    onBackClick: () -> Unit
-) {
-    // --- CORRECCIÓN ---
-    // Obtenemos el repositorio unificado desde la Aplicación
-    val context = LocalContext.current
-    val app = context.applicationContext as MetroLimaApp
-    val metroRepository = app.repository
-
-    // Creamos el ViewModel usando el factory corregido que espera un MetroRepository
-    val viewModel: PlanificadorRutaViewModel = viewModel(
-        factory = PlanificadorRutaViewModel.provideFactory(metroRepository)
+    onBackClick: () -> Unit, // Para el botón de "atrás"
+    // El ViewModel ahora se inyectará correctamente gracias al Paso 1
+    viewModel: PlanificadorRutaViewModel = viewModel(
+        factory = PlanificadorRutaViewModel.provideFactory(
+            (LocalContext.current.applicationContext as MetroLimaApp).repository
+        )
     )
-    // --- FIN DE LA CORRECCIÓN ---
-
+) {
+    val estaciones by viewModel.todasLasEstaciones.collectAsState()
     val origen by viewModel.origenSeleccionado.collectAsState()
     val destino by viewModel.destinoSeleccionado.collectAsState()
-    val estaciones by viewModel.todasLasEstaciones.collectAsState()
     val ruta by viewModel.rutaCalculada.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Planificador de Rutas")
-        Spacer(modifier = Modifier.height(16.dp))
+        // (Aquí iría tu TopAppBar con el onBackClick)
+        Text(text = "Planificar Ruta", style = MaterialTheme.typography.headlineSmall)
 
-        // (Aquí iría tu UI para seleccionar origen y destino)
-        Text("Origen: ${origen?.nombre ?: "No seleccionado"}")
-        Text("Destino: ${destino?.nombre ?: "No seleccionado"}")
+        // Selector de Origen
+        EstacionSelector(
+            label = "Desde (Origen)",
+            estaciones = estaciones,
+            selected = origen,
+            onSelected = viewModel::seleccionarOrigen
+        )
 
-        // Botones de ejemplo para simular la selección
-        Row {
-            Button(onClick = {
-                if (estaciones.isNotEmpty()) viewModel.seleccionarOrigen(estaciones.first())
-            }) {
-                Text("Sel. Origen (Test)")
-            }
-            Button(onClick = {
-                if (estaciones.size > 1) viewModel.seleccionarDestino(estaciones.last())
-            }) {
-                Text("Sel. Destino (Test)")
-            }
+        // Selector de Destino
+        EstacionSelector(
+            label = "Hasta (Destino)",
+            estaciones = estaciones,
+            selected = destino,
+            onSelected = viewModel::seleccionarDestino
+        )
+
+        Button(
+            onClick = { /* la ruta se calcula automáticamente */ },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = origen != null && destino != null
+        ) {
+            Text("Calcular Ruta")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Mostrar resultado de la ruta
+        // Mostrar resultado (simple)
         if (ruta.pasos.isNotEmpty()) {
-            Text("Ruta Calculada (${ruta.tiempoEstimadoMinutos} min):")
-            ruta.pasos.forEach { paso ->
-                Text("- ${paso.nombreEstacion}")
-            }
-        } else {
-            Text("Selecciona un origen y destino.")
+            Text("Tiempo estimado: ${ruta.tiempoEstimadoMinutos} min.")
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onBackClick) {
-            Text("Volver")
+// Composable reutilizable para el Dropdown
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EstacionSelector(
+    label: String,
+    estaciones: List<EstacionEntity>,
+    selected: EstacionEntity?,
+    onSelected: (EstacionEntity) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        OutlinedTextField(
+            value = selected?.nombre ?: "",
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(label) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            estaciones.forEach { estacion ->
+                DropdownMenuItem(
+                    text = { Text(estacion.nombre) },
+                    onClick = {
+                        onSelected(estacion)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }
