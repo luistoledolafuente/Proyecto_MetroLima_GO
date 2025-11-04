@@ -2,9 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")
-    // MEJORA RECOMENDADA: Añade el plugin KSP
-    // alias(libs.plugins.kotlin.ksp) // Descomenta esto si migras Room a KSP
+    alias(libs.plugins.kotlin.kapt)
+
 }
 
 android {
