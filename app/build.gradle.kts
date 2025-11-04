@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-kapt")
+    // MEJORA RECOMENDADA: Añade el plugin KSP
+    // alias(libs.plugins.kotlin.ksp) // Descomenta esto si migras Room a KSP
 }
 
 android {
@@ -49,10 +51,13 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
-    implementation("androidx.compose.material:material-icons-extended:<version>")
+
+    // CORREGIDO: Se reemplazó el placeholder "<version>" por la dependencia de 'libs'
+    implementation(libs.androidx.compose.material.icons.extended)
+
     implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material3) // Esta es la única dependencia de Material3 que necesitas (viene del BOM)
+    // ELIMINADA: implementation(libs.androidx.material3) // Redundante
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -66,12 +71,15 @@ dependencies {
     // Room (Base de datos)
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
+
     // OJO: Si usas 'kapt', debes tener la configuración 'id("kotlin-kapt")' en la parte superior.
     kapt("androidx.room:room-compiler:$roomVersion")
+    // MEJORA RECOMENDADA: Reemplaza la línea de 'kapt' de arriba por esta de 'ksp' para compilaciones más rápidas
+    // ksp("androidx.room:room-compiler:$roomVersion") // (Recuerda añadir el plugin 'kotlin-ksp' arriba)
+
     implementation("androidx.room:room-ktx:$roomVersion")
 
     // Navigation Compose
-
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
     // Retrofit (Para la API)
@@ -89,14 +97,13 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion") // Añadido para asegurar la compatibilidad
     implementation("androidx.compose.foundation:foundation")
-    implementation("androidx.compose.runtime:runtime")
 
-    // Jetpack Compose Material3
-    implementation("androidx.compose.material3:material3:1.2.0")
+    // ELIMINADA: implementation("androidx.compose.runtime:runtime") // Redundante (cubierta por el BOM)
+
+    // ELIMINADA: implementation("androidx.compose.material3:material3:1.2.0") // Redundante (cubierta por el BOM)
 
     // Material3 window size & other utilities (opcional pero recomendado)
     implementation("androidx.compose.material3:material3-window-size-class:1.2.0")
 
-    // Compose runtime
-    implementation("androidx.compose.runtime:runtime:1.5.0")
+// ELIMINADA: implementation("androidx.compose.runtime:runtime:1.5.0") // Redundante (cubierta por el BOM
 }
