@@ -3,7 +3,7 @@ package com.metrolimago
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.metrolimago.ui.navigation.AppNavigation
+// 1. Asegúrate de que importa MainScreen
 import com.metrolimago.ui.MainScreen
 import com.metrolimago.ui.theme.MetroLimaGOTheme
 
@@ -12,7 +12,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MetroLimaGOTheme {
-                MainScreen() // <- Controla toda la navegación de tu app
+                // 2. Asegúrate de que llama a MainScreen()
+                MainScreen()
             }
         }
     }

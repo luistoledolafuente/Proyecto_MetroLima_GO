@@ -1,6 +1,7 @@
 package com.metrolimago
 
 import android.app.Application
+import androidx.room.Room // <-- AÑADE ESTA IMPORTACIÓN
 import com.metrolimago.data.db.MetroDatabase
 import com.metrolimago.data.remote.FAKE_API_BASE_URL
 import com.metrolimago.data.remote.MetroApiService
@@ -11,8 +12,14 @@ import kotlin.getValue
 
 class MetroLimaApp : Application() {
 
-    // Instancia de la Base de Datos
-    private val database by lazy { MetroDatabase.getDatabase(this) }
+    // Instancia de la Base de Datos (¡CORREGIDO!)
+    private val database by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            MetroDatabase::class.java,
+            "metro_database" // Puedes cambiar este nombre si quieres
+        ).build()
+    }
 
     // 1. Crear la instancia de ApiService (Retrofit)
     private val apiService: MetroApiService by lazy {
@@ -30,6 +37,7 @@ class MetroLimaApp : Application() {
         super.onCreate()
 
         // 3. Inicializar el repositorio UNIFICADO con AMBOS argumentos
+        // (Esta línea ahora funcionará correctamente)
         repository = MetroRepository(database.estacionDao(), apiService)
     }
 }
