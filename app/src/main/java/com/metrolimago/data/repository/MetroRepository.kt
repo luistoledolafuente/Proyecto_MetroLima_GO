@@ -1,14 +1,9 @@
 package com.metrolimago.data.repository
 
 import com.metrolimago.data.dao.EstacionDao
-import com.metrolimago.data.remote.MetroApiService
+import com.metrolimago.data.model.EstacionEntity
+import kotlinx.coroutines.flow.Flow
 
-class MetroRepository(
-    private val estacionDao: EstacionDao,
-    private val apiService: MetroApiService // Añadir el servicio API
-) {
-    val todasLasEstaciones = estacionDao.obtenerTodas()
-
-    // Nueva función para obtener alertas desde la red
-    suspend fun obtenerAlertasDesdeApi() = apiService.obtenerAlertas()
+class MetroRepository(private val estacionDao: EstacionDao) {
+    fun getEstaciones(): Flow<List<EstacionEntity>> = estacionDao.getEstaciones()
 }

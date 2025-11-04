@@ -16,6 +16,7 @@ import com.metrolimago.ui.screens.station_list.ListaEstacionesScreen
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
+<<<<<<< HEAD
     NavHost(
         navController = navController,
         startDestination = Screen.Home.route // Iniciamos en Home
@@ -33,11 +34,27 @@ fun AppNavigation(navController: NavHostController) {
             HomeScreen(
                 onStationClick = { stationId ->
                     navController.navigate("${Screen.StationDetail.route}/$stationId")
+=======
+    NavHost(navController = navController, startDestination = Screen.Home.route) {
+
+        composable(Screen.Home.route) {
+            HomeScreen(
+                onNavigateToStationList = { navController.navigate(Screen.StationList.route) },
+                onNavigateToRoutePlanner = { navController.navigate(Screen.RoutePlanner.route) }
+            )
+        }
+
+        composable(Screen.StationList.route) {
+            ListaEstacionesScreen(
+                onStationClick = { stationName ->
+                    navController.navigate(Screen.StationDetail.createRoute(stationName))
+>>>>>>> main
                 }
             )
         }
 
         composable(
+<<<<<<< HEAD
             route = Screen.StationList.route,
             enterTransition = { fadeIn(animationSpec = tween(300)) },
             exitTransition = { fadeOut(animationSpec = tween(300)) },
@@ -88,3 +105,24 @@ fun AppNavigation(navController: NavHostController) {
         }
     }
 }
+=======
+            Screen.StationDetail.route,
+            arguments = listOf()
+        ) { backStackEntry ->
+            val stationName = backStackEntry.arguments?.getString("stationId") ?: "Desconocida"
+            DetalleEstacionScreen(
+                stationName = stationName,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.RoutePlanner.route) {
+            PlanificadorRutaScreen(onBackClick = { navController.popBackStack() })
+        }
+
+        composable(Screen.Settings.route) {
+            Text("PANTALLA DE AJUSTES")
+        }
+    }
+}
+>>>>>>> main
